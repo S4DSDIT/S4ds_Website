@@ -1,0 +1,19 @@
+{
+  "name": "s4ds",
+  "version": "1.0.0",
+  "description": "",
+  "main": "admin.js",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build .",
+    "test": "vite test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "appwrite": "^20.0.0",
+    "vite": "^7.1.5"
+  }
+}

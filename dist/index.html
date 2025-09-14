@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Data Visualizer</title>
+    <!-- Use a custom font and Tailwind CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+  <script type="module" crossorigin src="/assets/index-DYCy7hXt.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-spinner"></div>
+    </div>
+
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Header & Navigation -->
+    <header id="navbar" class="fixed w-full z-50 py-4 px-8 md:px-12">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#hero" class="text-2xl font-bold text-white tracking-wide">DataViz</a>
+            <nav id="nav-menu" class="hidden md:flex md:items-center space-x-6">
+                <a href="#about" class="nav-link text-lg font-medium hover:text-orange-400 transition">About</a>
+                <a href="#events" class="nav-link text-lg font-medium hover:text-orange-400 transition">Events</a>
+                <a href="#team" class="nav-link text-lg font-medium hover:text-orange-400 transition">Team</a>
+                <a href="#sponsors" class="nav-link text-lg font-medium hover:text-orange-400 transition">Sponsors</a>
+                <a href="#contact" class="nav-link text-lg font-medium hover:text-orange-400 transition">Contact</a>
+            </nav>
+            <button id="nav-toggle" class="md:hidden text-2xl focus:outline-none">☰</button>
+        </div>
+    </header>
+
+    <main class="relative z-10">
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section flex flex-col justify-center items-center text-center p-8 md:p-12">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">
+                    Visualize the Future
+                </h2>
+                <p class="hero-tagline text-lg md:text-xl mb-8">
+                    Creating intelligent solutions with data and technology.
+                </p>
+                <div class="space-x-4">
+                    <button id="join-btn" class="cta-button bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300">
+                        Join Us
+                    </button>
+                    <button id="learn-more-btn" class="cta-button bg-transparent border-2 border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 px-8">
+            <div class="container mx-auto">
+                <h2 class="section-title text-3xl font-bold text-center mb-10">About Us</h2>
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="loading">
+                        <h3 class="text-2xl font-semibold mb-4 text-orange-400">Our Mission</h3>
+                        <p class="text-lg text-gray-400 mb-6">
+                            We are a community of innovators, researchers, and developers passionate about the intersection of data science, artificial intelligence, and technology. Our mission is to democratize knowledge and empower individuals to build impactful, real-world solutions.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8 text-center">
+                        <div class="stat-item loading">
+                            <h4 class="text-5xl font-bold text-orange-500 stat-number">50+</h4>
+                            <p class="text-lg text-gray-400">Members</p>
+                        </div>
+                        <div class="stat-item loading">
+                            <h4 class="text-5xl font-bold text-orange-500 stat-number">10+</h4>
+                            <p class="text-lg text-gray-400">Projects</p>
+                        </div>
+                        <div class="stat-item loading">
+                            <h4 class="text-5xl font-bold text-orange-500 stat-number">100%</h4>
+                            <p class="text-lg text-gray-400">Growth</p>
+                        </div>
+                        <div class="stat-item loading">
+                            <h4 class="text-5xl font-bold text-orange-500 stat-number">20+</h4>
+                            <p class="text-lg text-gray-400">Events</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events" class="py-20 px-8 bg-gray-800">
+            <div class="container mx-auto">
+                <h2 class="section-title text-3xl font-bold text-center mb-10">Upcoming Events</h2>
+                <div class="events-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Events will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="py-20 px-8">
+            <div class="container mx-auto">
+                <h2 class="section-title text-3xl font-bold text-center mb-10">Our Team</h2>
+                <div class="team-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <!-- Team members will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Sponsors Section -->
+        <section id="sponsors" class="py-20 px-8 bg-gray-800">
+            <div class="container mx-auto">
+                <h2 class="section-title text-3xl font-bold text-center mb-10">Our Sponsors</h2>
+                <div class="sponsors-grid grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                    <!-- Sponsors will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Gallery Section -->
+        <section id="gallery" class="py-20 px-8">
+            <div class="container mx-auto">
+                <h2 class="section-title text-3xl font-bold text-center mb-10">Gallery</h2>
+                <div class="gallery-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                    <!-- Gallery items will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 px-8">
+            <div class="container mx-auto">
+                <h2 class="section-title text-3xl font-bold text-center mb-10">Get in Touch</h2>
+                <div class="max-w-3xl mx-auto bg-gray-800 p-8 rounded-xl shadow-lg">
+                    <form id="contact-form" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <input type="text" id="firstName" name="firstName" placeholder="First Name" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            <input type="text" id="lastName" name="lastName" placeholder="Last Name" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        </div>
+                        <input type="email" id="email" name="email" placeholder="Email Address" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <input type="text" id="subject" name="subject" placeholder="Subject" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <textarea id="message" name="message" rows="5" placeholder="Your Message" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                        <button type="submit" class="submit-btn w-full py-3 px-6 bg-orange-600 rounded-full text-white font-bold hover:bg-orange-700 transition duration-300">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="py-8 text-center text-gray-500 text-sm">
+        <p>&copy; 2023 DataViz. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

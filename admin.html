@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel | S4DS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.ico" />
+<script src="https://cdn.jsdelivr.net/npm/appwrite@20.0.0/dist/iife/sdk.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif; background: #111; color: #fff; margin: 0;
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    }
+
+    .panel {
+      background: #222; border-radius: 12px; box-shadow: 0 8px 32px #0008;
+      padding: 32px; width: 100%; max-width: 800px; margin: 16px;
+    }
+    h2 { color: #ff6600; font-family: 'Orbitron', monospace; font-size: 2rem; margin-bottom: 24px; text-align: center; }
+    input, textarea, button {
+      width: 100%; padding: 12px; margin-bottom: 18px;
+      border-radius: 8px; border: none; font-size: 1rem;
+      background: #333; color: #fff; transition: background 0.2s;
+    }
+    input:focus, textarea:focus { background: #444; outline: 2px solid #ff6600; }
+    button { background: linear-gradient(45deg, #ff6600, #ff8533); color: #fff; font-weight: 600; cursor: pointer; border: none; margin-top: 8px; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }
+    button.logout { background: #333; border: 2px solid #ff6600; margin-top: 0; margin-bottom: 0; }
+    .item-list { margin-top: 32px; }
+    .item {
+      background: #181818; padding: 16px; border-radius: 8px; margin-bottom: 16px; position: relative; border-left: 4px solid #ff6600; transition: box-shadow 0.2s;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+    .item:hover { box-shadow: 0 6px 20px #ff66004a; }
+    .item-actions { position: absolute; top: 16px; right: 16px; display: flex; gap: 6px; }
+    .item-actions button {
+      border-radius: 6px; padding: 6px 12px; font-size: 0.85rem; margin: 0; letter-spacing: 0; background: #252525; color: #ff6600; border: 1px solid #ff6600; transition: background .2s, color .2s;
+    }
+    .item-actions button:hover { background: #ff6600; color: #fff; }
+    .hidden { display: none; }
+    .error, .success { color: #fff; padding: 10px; margin-bottom: 12px; border-radius: 5px; font-size: .95em; }
+    .error { background: #800; }
+    .success { background: #284628; color: #aaffaa; }
+    label { font-weight: 600; color: #ff8533; margin-bottom: 3px; display: block; }
+    .tabs { display: flex; gap: 8px; border-bottom: 1px solid #444; margin-bottom: 24px; }
+    .tab-link { background: none; border: none; color: #999; padding: 12px 16px; cursor: pointer; font-size: 1rem; transition: color .2s, border-bottom .2s; border-bottom: 2px solid transparent; }
+    .tab-link.active { color: #ff6600; border-bottom: 2px solid #ff6600; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h2>Admin Panel</h2>
+    
+    <div id="auth-section">
+      <form id="login-form" autocomplete="off">
+        <label for="email">Admin Email</label>
+        <input type="email" id="email" required placeholder="admin@email.com">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="••••••••">
+        <button type="submit">Login</button>
+        <div id="auth-msg"></div>
+      </form>
+    </div>
+
+    <div id="dashboard-section" class="hidden">
+      <button id="logout-btn" class="logout">Logout</button>
+      
+      <div class="tabs">
+        <button class="tab-link active" onclick="openTab(event, 'events-tab')">Events</button>
+        <button class="tab-link" onclick="openTab(event, 'gallery-tab')">Gallery</button>
+        <button class="tab-link" onclick="openTab(event, 'team-tab')">Team</button>
+        <button class="tab-link" onclick="openTab(event, 'sponsors-tab')">Sponsors</button>
+      </div>
+
+      <div id="events-tab" class="tab-content active">
+        <h3>Manage Events</h3>
+        <form id="event-form">
+          <input type="hidden" id="event-id">
+          <label for="title">Title</label>
+          <input type="text" id="title" required>
+          <label for="description">Description</label>
+          <textarea id="description" required rows="2"></textarea>
+          <label for="date">Date</label>
+          <input type="date" id="date" required>
+          <button type="submit">Add Event</button>
+          <div id="event-msg"></div>
+        </form>
+        <div class="item-list" id="event-list"></div>
+      </div>
+
+      <div id="gallery-tab" class="tab-content">
+        <h3>Manage Gallery</h3>
+        <form id="gallery-form">
+          <input type="hidden" id="gallery-id">
+          <label for="gallery-image">Image</label>
+          <input type="file" id="gallery-image" accept="image/*">
+          <label for="gallery-caption">Caption</label>
+          <input type="text" id="gallery-caption" required>
+          <button type="submit">Add Image</button>
+          <div id="gallery-msg"></div>
+        </form>
+        <div class="item-list" id="gallery-list"></div>
+      </div>
+
+      <div id="team-tab" class="tab-content">
+        <h3>Manage Team</h3>
+        <form id="team-form">
+          <input type="hidden" id="team-id">
+          <label for="team-member-image">Image</label>
+          <input type="file" id="team-member-image" accept="image/*">
+          <label for="team-member-name">Name</label>
+          <input type="text" id="team-member-name" required>
+          <label for="team-member-role">Role</label>
+          <input type="text" id="team-member-role" required>
+          <button type="submit">Add Team Member</button>
+          <div id="team-msg"></div>
+        </form>
+        <div class="item-list" id="team-list"></div>
+      </div>
+
+      <div id="sponsors-tab" class="tab-content">
+        <h3>Manage Sponsors</h3>
+        <form id="sponsor-form">
+          <input type="hidden" id="sponsor-id">
+          <label for="sponsor-logo">Logo</label>
+          <input type="file" id="sponsor-logo" accept="image/*">
+          <label for="sponsor-name">Name</label>
+          <input type="text" id="sponsor-name" required>
+          <button type="submit">Add Sponsor</button>
+          <div id="sponsor-msg"></div>
+        </form>
+        <div class="item-list" id="sponsor-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+  import { account, databases, storage, DATABASE_ID, EVENTS_COLLECTION_ID, GALLERY_COLLECTION_ID, TEAM_COLLECTION_ID, SPONSORS_COLLECTION_ID, BUCKET_ID } from './appwrite-config.js';
+  import { ID, Query, Permission, Role } from "https://esm.run/appwrite";
+  
+    
+
+    // --- Tabbed Interface ---
+    window.openTab = function(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    // Make the first tab active by default
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('.tab-link').click();
+        checkUserSession();
+    });
+
+
+    const authSection = document.getElementById('auth-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const loginForm = document.getElementById('login-form');
+    const logoutBtn = document.getElementById('logout-btn');
+    const authMsg = document.getElementById('auth-msg');
+
+    // --- Event Management ---
+    const eventForm = document.getElementById('event-form');
+    const eventListDiv = document.getElementById('event-list');
+    const eventMsg = document.getElementById('event-msg');
+
+    // --- Gallery Management ---
+    const galleryForm = document.getElementById('gallery-form');
+    const galleryListDiv = document.getElementById('gallery-list');
+    const galleryMsg = document.getElementById('gallery-msg');
+
+    // --- Team Management ---
+    const teamForm = document.getElementById('team-form');
+    const teamListDiv = document.getElementById('team-list');
+    const teamMsg = document.getElementById('team-msg');
+
+    // --- Sponsor Management ---
+    const sponsorForm = document.getElementById('sponsor-form');
+    const sponsorListDiv = document.getElementById('sponsor-list');
+    const sponsorMsg = document.getElementById('sponsor-msg');
+
+
+    async function checkUserSession() {
+    try {
+        const user = await account.get();
+        console.log("✅ Logged in user:", user);
+
+        authSection.classList.add('hidden');
+        dashboardSection.classList.remove('hidden');
+
+        // Load data for all sections
+        loadEvents();
+        loadGallery();
+        loadTeam();
+        loadSponsors();
+
+    } catch (err) {
+        console.error("❌ Session check failed:", err.message);
+        authSection.classList.remove('hidden');
+        dashboardSection.classList.add('hidden');
+    }
+}
+
+
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    authMsg.textContent = '';
+
+    const email = loginForm.email.value;
+    const password = loginForm.password.value;
+
+    try {
+        // Check if already logged in
+        try {
+            const session = await account.get();
+            console.log("Already logged in as:", session.email);
+            authMsg.textContent = "You are already logged in.";
+            authMsg.className = "success";
+            checkUserSession();
+            return; // ✅ stop here, don’t try to create a new session
+        } catch (err) {
+            // no active session, continue login
+        }
+
+        // Create session if not logged in
+        await account.createEmailPasswordSession(email, password);
+
+        authMsg.textContent = '';
+        checkUserSession();
+    } catch (err) {
+        authMsg.textContent = "Login failed: " + err.message;
+        authMsg.className = "error";
+        console.error(err);
+    }
+});
+
+
+    logoutBtn.addEventListener('click', async () => {
+        await account.deleteSession('current');
+        checkUserSession();
+    });
+                checkUserSession();
+
+
+    // --- Event Management ---
+    eventForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        eventMsg.textContent = '';
+        const id = eventForm['event-id'].value;
+        const title = eventForm.title.value.trim();
+        const description = eventForm.description.value.trim();
+        const date = eventForm.date.value;
+        if (!title || !description || !date) {
+            eventMsg.textContent = "Please fill all fields.";
+            eventMsg.className = "error";
+            return;
+        }
+        try {
+            const data = { title, description, date };
+            if (id) {
+                await databases.updateDocument(DATABASE_ID, EVENTS_COLLECTION_ID, id, data);
+                eventMsg.textContent = "Event updated!";
+                eventMsg.className = "success";
+            } else {
+                await databases.createDocument(DATABASE_ID, EVENTS_COLLECTION_ID, ID.unique(), data);
+                eventMsg.textContent = "Event added!";
+                eventMsg.className = "success";
+            }
+            eventForm.reset();
+            eventForm['event-id'].value = '';
+            eventForm.querySelector('button').textContent = 'Add Event';
+            loadEvents();
+        } catch (err) {
+            eventMsg.textContent = err.message;
+            eventMsg.className = "error";
+        }
+    });
+
+    async function loadEvents() {
+        eventListDiv.innerHTML = "<div style='color:#999;text-align:center;'>Loading events...</div>";
+        try {
+            const response = await databases.listDocuments(DATABASE_ID, EVENTS_COLLECTION_ID, [Query.orderDesc("date")]);
+            if (response.documents.length === 0) {
+                eventListDiv.innerHTML = "<div style='color:#666;text-align:center;'>No events found.</div>";
+                return;
+            }
+            eventListDiv.innerHTML = '';
+            response.documents.forEach(event => {
+                const html = `
+                    <div class="item">
+                        <div>
+                            <b>${event.title}</b> <span style="color:#ff8533; font-size:0.9em;">(${event.date})</span>
+                            <div style="margin:4px 0 8px; font-size:0.98em;">${event.description}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button onclick="editEvent('${event.$id}')">Edit</button>
+                            <button onclick="deleteEvent('${event.$id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+                eventListDiv.insertAdjacentHTML('beforeend', html);
+            });
+        } catch (err) {
+            eventListDiv.innerHTML = "<div class='error'>Error loading events.</div>";
+            console.error(err);
+        }
+    }
+
+    window.editEvent = async function(id) {
+        eventMsg.textContent = '';
+        try {
+            const event = await databases.getDocument(DATABASE_ID, EVENTS_COLLECTION_ID, id);
+            eventForm['event-id'].value = event.$id;
+            eventForm.title.value = event.title;
+            eventForm.description.value = event.description;
+            eventForm.date.value = event.date;
+            eventForm.querySelector('button').textContent = 'Update Event';
+        } catch (err) {
+            eventMsg.textContent = err.message;
+            eventMsg.className = "error";
+        }
+    }
+
+    window.deleteEvent = async function(id) {
+        if (!confirm('Delete this event?')) return;
+        try {
+            await databases.deleteDocument(DATABASE_ID, EVENTS_COLLECTION_ID, id);
+            loadEvents();
+        } catch (err) {
+            alert("Error deleting: " + err.message);
+        }
+    }
+
+    galleryForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  galleryMsg.textContent = '';
+  const id = galleryForm['gallery-id'].value;
+  const caption = galleryForm['gallery-caption'].value.trim();
+  const imageFile = galleryForm['gallery-image'].files[0];
+
+  if (!caption) {
+    galleryMsg.textContent = "Please enter a caption.";
+    galleryMsg.className = "error";
+    return;
+  }
+
+  try {
+    let imageUrl;
+
+    if (imageFile) {
+      const file = await storage.createFile(BUCKET_ID, ID.unique(), imageFile);
+      imageUrl = storage.getFileView(BUCKET_ID, file.$id); // ✅ correct
+      console.log('File uploaded:', file);
+      console.log('imageUrl:', imageUrl);
+    }
+
+    const data = { caption, imageUrl }; // ✅ correct field name
+
+    if (id) {
+      if (!imageUrl) {
+        const doc = await databases.getDocument(DATABASE_ID, GALLERY_COLLECTION_ID, id);
+        data.imageUrl = doc.imageUrl; // keep old if not updated
+      }
+      await databases.updateDocument(DATABASE_ID, GALLERY_COLLECTION_ID, id, data);
+      galleryMsg.textContent = "Image updated!";
+      galleryMsg.className = "success";
+    } else {
+      if (!imageFile) {
+        galleryMsg.textContent = "Please select an image.";
+        galleryMsg.className = "error";
+        return;
+      }
+      await databases.createDocument(DATABASE_ID, GALLERY_COLLECTION_ID, ID.unique(), data);
+      galleryMsg.textContent = "Image added!";
+      galleryMsg.className = "success";
+    }
+
+    galleryForm.reset();
+    galleryForm['gallery-id'].value = '';
+    galleryForm.querySelector('button').textContent = 'Add Image';
+    loadGallery();
+  } catch (err) {
+    galleryMsg.textContent = err.message;
+    galleryMsg.className = "error";
+    console.error(err);
+  }
+});
+
+
+    async function loadGallery() {
+        galleryListDiv.innerHTML = "<div style='color:#999;text-align:center;'>Loading gallery...</div>";
+        try {
+            const response = await databases.listDocuments(DATABASE_ID, GALLERY_COLLECTION_ID, [Query.orderDesc("$createdAt")]);
+            if (response.documents.length === 0) {
+                galleryListDiv.innerHTML = "<div style='color:#666;text-align:center;'>No images found.</div>";
+                return;
+            }
+            galleryListDiv.innerHTML = '';
+            response.documents.forEach(item => {
+                const html = `
+                    <div class="item">
+                        <img src="${item.imageUrl}" alt="${item.caption}">
+                        <div>
+                            <b>${item.caption}</b>
+                        </div>
+                        <div class="item-actions">
+                            <button onclick="editGalleryImage('${item.$id}')">Edit</button>
+                            <button onclick="deleteGalleryImage('${item.$id}', '${item.imageUrl}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+                galleryListDiv.insertAdjacentHTML('beforeend', html);
+            });
+        } catch (err) {
+            galleryListDiv.innerHTML = "<div class='error'>Error loading gallery.</div>";
+            console.error(err);
+        }
+    }
+
+    window.editGalleryImage = async function(id) {
+        galleryMsg.textContent = '';
+        try {
+            const item = await databases.getDocument(DATABASE_ID, GALLERY_COLLECTION_ID, id);
+            galleryForm['gallery-id'].value = item.$id;
+            galleryForm['gallery-caption'].value = item.caption;
+            galleryForm.querySelector('button').textContent = 'Update Image';
+        } catch (err) {
+            galleryMsg.textContent = err.message;
+            galleryMsg.className = "error";
+        }
+    }
+
+    window.deleteGalleryImage = async function(id, imageUrl){
+        if (!confirm('Delete this image?')) return;
+        try {
+            const fileId = imageUrl.split('/files/')[1].split('/view')[0];
+            await storage.deleteFile(BUCKET_ID, fileId);
+            await databases.deleteDocument(DATABASE_ID, GALLERY_COLLECTION_ID, id);
+            loadGallery();
+        } catch (err) {
+            alert("Error deleting image: " + err.message);
+            console.error(err);
+        }
+    }
+
+   teamForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  teamMsg.textContent = '';
+  const id = teamForm['team-id'].value;
+  const name = teamForm['team-member-name'].value.trim();
+  const role = teamForm['team-member-role'].value.trim();
+  const imageFile = teamForm['team-member-image'].files[0];
+
+  if (!name || !role) {
+    teamMsg.textContent = "Please enter a name and role.";
+    teamMsg.className = "error";
+    return;
+  }
+
+  try {
+    let image;
+    if (imageFile) {
+      const file = await storage.createFile(BUCKET_ID, ID.unique(), imageFile);
+      image = storage.getFileView(BUCKET_ID, file.$id); // ✅ correct usage
+    }
+
+   const data = { Name: name, Role: role };
+if (image) {
+  data.image = image;
+}
+
+
+    if (id) { // Update existing member
+      if (!image) {
+        const doc = await databases.getDocument(DATABASE_ID, TEAM_COLLECTION_ID, id);
+        data.image = doc.image; // ✅ keep old image
+      }
+      await databases.updateDocument(DATABASE_ID, TEAM_COLLECTION_ID, id, data);
+      teamMsg.textContent = "Team member updated!";
+      teamMsg.className = "success";
+
+    } else { // Add new member
+      if (!imageFile) {
+        teamMsg.textContent = "Please select an image.";
+        teamMsg.className = "error";
+        return;
+      }
+      await databases.createDocument(DATABASE_ID, TEAM_COLLECTION_ID, ID.unique(), data);
+      teamMsg.textContent = "Team member added!";
+      teamMsg.className = "success";
+    }
+
+    teamForm.reset();
+    teamForm['team-id'].value = '';
+    teamForm.querySelector('button').textContent = 'Add Team Member';
+    loadTeam();
+  } catch (err) {
+    teamMsg.textContent = err.message;
+    teamMsg.className = "error";
+    console.error(err);
+  }
+});
+
+async function loadTeam() {
+  teamListDiv.innerHTML = "<div style='color:#999;text-align:center;'>Loading team...</div>";
+  try {
+    const response = await databases.listDocuments(DATABASE_ID, TEAM_COLLECTION_ID, [Query.orderDesc("$createdAt")]);
+    if (response.documents.length === 0) {
+      teamListDiv.innerHTML = "<div style='color:#666;text-align:center;'>No team members found.</div>";
+      return;
+    }
+    teamListDiv.innerHTML = '';
+    response.documents.forEach(item => {
+      const html = `
+        <div class="item">
+          <img src="${item.image}" alt="${item.Name}">
+          <div>
+            <b>${item.Name}</b> - <span>${item.Role}</span>
+          </div>
+          <div class="item-actions">
+            <button onclick="editTeamMember('${item.$id}')">Edit</button>
+            <button onclick="deleteTeamMember('${item.$id}', '${item.image}')">Delete</button>
+          </div>
+        </div>
+      `;
+      teamListDiv.insertAdjacentHTML('beforeend', html);
+    });
+  } catch (err) {
+    teamListDiv.innerHTML = "<div class='error'>Error loading team.</div>";
+    console.error(err);
+  }
+}
+
+    window.editTeamMember = async function(id) {
+        teamMsg.textContent = '';
+        try {
+            const item = await databases.getDocument(DATABASE_ID, TEAM_COLLECTION_ID, id);
+            teamForm['team-id'].value = item.$id;
+            teamForm['team-member-name'].value = item.Name;
+            teamForm['team-member-role'].value = item.Role;
+            teamForm.querySelector('button').textContent = 'Update Team Member';
+        } catch (err) {
+            teamMsg.textContent = err.message;
+            teamMsg.className = "error";
+        }
+    }
+
+   window.deleteTeamMember = async function(id, image) {
+    if (!confirm('Delete this team member?')) return;
+    try {
+        if (image) {
+            const fileId = image.split('/files/')[1].split('/view')[0];
+            await storage.deleteFile(BUCKET_ID, fileId);
+        }
+        await databases.deleteDocument(DATABASE_ID, TEAM_COLLECTION_ID, id);
+        loadTeam();
+    } catch (err) {
+        alert("Error deleting team member: " + err.message);
+        console.error(err);
+    }
+}
+// --- Sponsor Management ---
+sponsorForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  sponsorMsg.textContent = '';
+
+  const id = sponsorForm['sponsor-id'].value;
+  const Name = sponsorForm['sponsor-name'].value.trim();  // ✅ capital N
+  const logoFile = sponsorForm['sponsor-logo'].files[0];
+
+  if (!Name) {
+    sponsorMsg.textContent = "Please enter a sponsor name.";
+    sponsorMsg.className = "error";
+    return;
+  }
+
+  try {
+    let imageUrl;
+
+    if (logoFile) {
+      const file = await storage.createFile(BUCKET_ID, ID.unique(), logoFile);
+      imageUrl = storage.getFileView(BUCKET_ID, file.$id); // ✅ correct
+    }
+
+    const data = { Name }; 
+    if (imageUrl) data.image = imageUrl;
+
+    if (id) {
+      if (!imageUrl) {
+        const doc = await databases.getDocument(DATABASE_ID, SPONSORS_COLLECTION_ID, id);
+        data.image = doc.image; // ✅ keep old
+      }
+      await databases.updateDocument(DATABASE_ID, SPONSORS_COLLECTION_ID, id, data);
+      sponsorMsg.textContent = "Sponsor updated!";
+    } else {
+      if (!imageUrl) {
+        sponsorMsg.textContent = "Please select a logo.";
+        sponsorMsg.className = "error";
+        return;
+      }
+      await databases.createDocument(DATABASE_ID, SPONSORS_COLLECTION_ID, ID.unique(), data);
+      sponsorMsg.textContent = "Sponsor added!";
+    }
+
+    sponsorMsg.className = "success";
+    sponsorForm.reset();
+    sponsorForm['sponsor-id'].value = '';
+    sponsorForm.querySelector('button').textContent = 'Add Sponsor';
+    loadSponsors();
+  } catch (err) {
+    sponsorMsg.textContent = err.message;
+    sponsorMsg.className = "error";
+    console.error(err);
+  }
+});
+
+async function loadSponsors() {
+  sponsorListDiv.innerHTML = "<div style='color:#999;text-align:center;'>Loading sponsors...</div>";
+  try {
+    const response = await databases.listDocuments(DATABASE_ID, SPONSORS_COLLECTION_ID, [Query.orderDesc("$createdAt")]);
+    console.log("Sponsor documents:", response.documents);
+
+    sponsorListDiv.innerHTML = '';
+    response.documents.forEach(item => {
+      const html = `
+        <div class="item">
+          <p>Raw Name: ${item.Name}</p>
+          <p>Raw image: ${item.image}</p>
+        </div>
+      `;
+      sponsorListDiv.insertAdjacentHTML('beforeend', html);
+      console.log("DEBUG sponsor:", item);
+console.log("item.Name =", item.Name);
+console.log("item.image =", item.image);
+
+    });
+  } catch (err) {
+    sponsorListDiv.innerHTML = "<div class='error'>Error loading sponsors.</div>";
+    console.error(err);
+  }
+}
+
+
+window.editSponsor = async function(id) {
+  try {
+    const item = await databases.getDocument(DATABASE_ID, SPONSORS_COLLECTION_ID, id);
+    sponsorForm['sponsor-id'].value = item.$id;
+    sponsorForm['sponsor-name'].value = item.Name;
+    sponsorForm.querySelector('button').textContent = 'Update Sponsor';
+  } catch (err) {
+    sponsorMsg.textContent = err.message;
+    sponsorMsg.className = "error";
+  }
+}
+
+window.deleteSponsor = async function(id) {
+  if (!confirm('Delete this sponsor?')) return;
+  try {
+    const doc = await databases.getDocument(DATABASE_ID, SPONSORS_COLLECTION_ID, id);
+    const imageUrl = doc.image;
+
+    const fileId = imageUrl.split('/files/')[1].split('/view')[0];
+    await storage.deleteFile(BUCKET_ID, fileId);
+    await databases.deleteDocument(DATABASE_ID, SPONSORS_COLLECTION_ID, id);
+    loadSponsors();
+  } catch (err) {
+    alert("Error deleting sponsor: " + err.message);
+    console.error(err);
+  }
+};
+async function fixSponsors() {
+  const sponsors = await databases.listDocuments(DATABASE_ID, SPONSORS_COLLECTION_ID);
+  for (const doc of sponsors.documents) {
+    if (!doc.image.startsWith("http")) {
+      // convert fileId → full view URL
+      const fileId = doc.image;
+      const image = storage.getFileView(BUCKET_ID, fileId);
+      await databases.updateDocument(DATABASE_ID, SPONSORS_COLLECTION_ID, doc.$id, {
+        image: image
+      });
+      console.log(`✅ Fixed sponsor ${doc.$id}`);
+    }
+  }
+}
+
+
+
+
+  </script>
+</body>
+</html>
