@@ -86,7 +86,7 @@
           <label for="date">Date</label>
           <input type="date" id="date" required>
           <button type="submit">Add Event</button>
-          <div id="event-msg"></div>
+          <!-- <div id="event-msg"></div> -->
         </form>
         <div class="item-list" id="event-list"></div>
       </div>
@@ -257,34 +257,26 @@ loginForm.addEventListener('submit', async (e) => {
     // --- Event Management ---
     eventForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        eventMsg.textContent = '';
         const id = eventForm['event-id'].value;
         const title = eventForm.title.value.trim();
         const description = eventForm.description.value.trim();
         const date = eventForm.date.value;
         if (!title || !description || !date) {
-            eventMsg.textContent = "Please fill all fields.";
-            eventMsg.className = "error";
             return;
         }
         try {
             const data = { title, description, date };
             if (id) {
                 await databases.updateDocument(DATABASE_ID, EVENTS_COLLECTION_ID, id, data);
-                eventMsg.textContent = "Event updated!";
-                eventMsg.className = "success";
             } else {
                 await databases.createDocument(DATABASE_ID, EVENTS_COLLECTION_ID, ID.unique(), data);
-                eventMsg.textContent = "Event added!";
-                eventMsg.className = "success";
             }
             eventForm.reset();
             eventForm['event-id'].value = '';
             eventForm.querySelector('button').textContent = 'Add Event';
             loadEvents();
         } catch (err) {
-            eventMsg.textContent = err.message;
-            eventMsg.className = "error";
+            console.error(err);
         }
     });
 
@@ -319,7 +311,6 @@ loginForm.addEventListener('submit', async (e) => {
     }
 
     window.editEvent = async function(id) {
-        eventMsg.textContent = '';
         try {
             const event = await databases.getDocument(DATABASE_ID, EVENTS_COLLECTION_ID, id);
             eventForm['event-id'].value = event.$id;
@@ -328,8 +319,7 @@ loginForm.addEventListener('submit', async (e) => {
             eventForm.date.value = event.date;
             eventForm.querySelector('button').textContent = 'Update Event';
         } catch (err) {
-            eventMsg.textContent = err.message;
-            eventMsg.className = "error";
+            console.error(err);
         }
     }
 

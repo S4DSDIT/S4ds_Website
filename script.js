@@ -847,10 +847,9 @@ async function loadEvents() {
           <div class="event-content">
             <h3>${event.title}</h3>
             <p>${event.description}</p>
-      _message       <div class="event-tags">
-              <span class="tag">Event</span>
-            </div>
+            
             <button class="event-btn">Learn More</button>
+            <a href="#" class="event-btn">Book Now</a>
           </div>
         </div>
       `;
@@ -884,7 +883,7 @@ async function loadGalleryPage() {
         response.documents.forEach(item => {
             const html = `
                 <div class="gallery-item loading">
-                  _message <img src="${item.imageUrl}" alt="${item.caption}">
+                   <img src="${item.imageUrl}" alt="${item.caption}">
                     <div class="gallery-item-overlay">
                         <h4>${item.caption}</h4>
                     </div>

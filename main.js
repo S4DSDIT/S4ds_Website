@@ -1,5 +1,8 @@
 import { client, databases, DATABASE_ID, EVENTS_COLLECTION_ID, GALLERY_COLLECTION_ID, TEAM_COLLECTION_ID, SPONSORS_COLLECTION_ID } from "./appwrite-config.js";
 import { Query } from 'https://cdn.jsdelivr.net/npm/appwrite@11.0.0/dist/esm/index.js';
+// main.js
+import "@fontsource/inter/400.css"; // Regular
+import "@fontsource/inter/500.css"; // Medium
 
 // Particle Animation System
 class ParticleSystem {
@@ -619,9 +622,7 @@ async function loadEvents() {
                     <div class="event-content">
                         <h3>${event.title}</h3>
                         <p>${event.description}</p>
-                        <div class="event-tags">
-                            <span class="tag">Event</span>
-                        </div>
+                       
                         <button class="event-btn">Learn More</button>
                     </div>
                 </div>
