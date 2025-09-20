@@ -487,7 +487,7 @@ class TypingAnimation {
         i++;
         setTimeout(type, speed);
       }
-    }
+    }
 
     type();
   }
@@ -564,7 +564,7 @@ class EventInteractions {
     setTimeout(() => {
       if (originalText.includes("Register")) {
         button.textContent = "Registered!";
-        button.style.background = "#28a745";
+  button.style.background = "#28a745";
         button.style.borderColor = "#28a745";
       } else {
         button.textContent = "Info Sent!";
@@ -629,9 +629,8 @@ class SmoothScrollEnhancement {
 
     window.addEventListener("scroll", () => {
       const scrollPercent =
-        (window.scrollY /
-          (document.documentElement.scrollHeight - window.innerHeight)) *
-        100;
+      scrollY /
+          ((document.documentElement.scrollHeight - window.innerHeight))*100;
       progressBar.style.width = scrollPercent + "%";
     });
   }
@@ -648,8 +647,7 @@ class LoadingAnimation {
 
     window.addEventListener("load", () => {
       if (preloader) {
-        // Hide the preloader after a short delay
-        setTimeout(() => {
+      setTimeout(() => {
           preloader.classList.add("hidden");
         }, 500);
       }
@@ -736,6 +734,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (path === '' || path === 'index.html') {
     new TypingAnimation();
+    loadEventBanner();
   }
   
   if (path === 'about.html') {
@@ -817,6 +816,62 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+async function loadEventBanner() {
+    const eventBanner = document.getElementById('event-banner');
+    const mainEventPoster = document.getElementById('main-event-poster');
+
+    if (!eventBanner || !mainEventPoster) return;
+
+    try {
+        const response = await databases.listDocuments(DATABASE_ID, EVENTS_COLLECTION_ID, [Query.orderDesc("date"), Query.limit(1)]);
+
+        if (response.documents.length === 0) {
+            eventBanner.style.display = 'none';
+            mainEventPoster.style.display = 'none';
+            return;
+        }
+
+        const event = response.documents[0];
+        const eventDate = new Date(event.date);
+        const month = eventDate.toLocaleString('default', { month: 'short' }).toUpperCase();
+        const day = eventDate.getDate();
+
+        // Populate main-event-poster with the image if available
+        if (event.imageUrl) {
+            mainEventPoster.innerHTML = `<img src="${event.imageUrl}" alt="${event.title} Poster" class="main-event-poster-image">`;
+            mainEventPoster.style.display = 'block'; // Ensure it's visible
+        } else {
+            mainEventPoster.style.display = 'none';
+        }
+
+        // Populate event-banner with event details
+        const html = `
+            <div class="container">
+                <div class="event-banner-content">
+                    <div class="event-banner-date">
+                        <span class="month">${month}</span>
+                        <span class="day">${day}</span>
+                    </div>
+                    <div class="event-banner-info">
+                        <h3>${event.title}</h3>
+                        <p>${event.description}</p>
+                    </div>
+                    <div class="event-banner-action">
+                        <a href="https://engg.dypvp.edu.in/VortexHackathon2025.aspx" class="cta-button primary">Register Now</a>
+                    </div>
+                </div>
+            </div>
+        `;
+        eventBanner.innerHTML = html;
+        eventBanner.style.display = 'block'; // Ensure it's visible
+
+    } catch (err) {
+        console.error("Error loading event banner:", err);
+        eventBanner.style.display = 'none';
+        mainEventPoster.style.display = 'none';
+    }
+}
+
 async function loadEvents() {
   const eventsGrid = document.querySelector('.events-grid');
   if (!eventsGrid) return;
@@ -848,8 +903,7 @@ async function loadEvents() {
             <h3>${event.title}</h3>
             <p>${event.description}</p>
             
-            <button class="event-btn">Learn More</button>
-            <a href="#" class="event-btn">Book Now</a>
+                                            <a href="https://engg.dypvp.edu.in/VortexHackathon2025.aspx" class="event-btn">Register</a>
           </div>
         </div>
       `;
@@ -921,15 +975,12 @@ async function loadTeamPage() {
                     <div class="member-photo">
                         <img src="${item.image}" alt="${item.Name}">
                         <div class="member-overlay">
-                            <div class="social-links">
-                                <a href="${item.linkedinUrl}" class="social-icon">💼</a>
-                                <a href="${item.githubUrl}" class="social-icon">🐙</a>
-                            </div>
+                            
                         </div>
                     </div>
                     <div class="member-info">
                         <h4>${item.Name}</h4>
-                        <p class="member-role">${item.Role}</p>
+                        <p>${item.Role}</p>
                     </div>
                 </div>
             `;

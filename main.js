@@ -684,12 +684,7 @@ async function loadTeamPage() {
                 <div class="team-member loading">
                     <div class="member-photo">
                         <img src="${item.imageUrl}" alt="${item.name}">
-                        <div class="member-overlay">
-                            <div class="social-links">
-                                <a href="#" class="social-icon">💼</a>
-                                <a href="#" class="social-icon">🐙</a>
-                            </div>
-                        </div>
+                        
                     </div>
                     <div class="member-info">
                         <h4>${item.name}</h4>
