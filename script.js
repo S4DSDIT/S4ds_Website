@@ -1,3 +1,5 @@
+import { inject } from '@vercel/analytics';
+inject();
 // Firebase Imports
 // REMOVED: This is no longer needed since we are using Appwrite
 // import { databases } from "./appwrite-config.js";
