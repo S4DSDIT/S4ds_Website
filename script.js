@@ -956,7 +956,7 @@ async function loadGalleryPage() {
 }
 
 async function loadTeamPage() {
-    const teamGrid = document.querySelector('.team-grid');
+    const teamGrid = document.querySelector('#team-members-grid');
     if (!teamGrid) return;
 
     teamGrid.innerHTML = '<div style="color:#999;text-align:center;grid-column: 1 / -1;">Loading team...</div>';
