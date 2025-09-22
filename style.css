@@ -308,7 +308,7 @@ section {
 
 .main-event-poster-image {
     max-width: 80%; /* Adjust as needed */
-    height: auto;
+    height: 25%;
     border-radius: 20px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
     border: 3px solid var(--primary-orange);
@@ -327,6 +327,8 @@ section {
     border-top: 1px solid var(--border-glow);
     border-bottom: 1px solid var(--border-glow);
     text-align: center;
+    width: 100% * 0.8;
+    height: auto;
 }
 
 .event-banner-content {
@@ -334,11 +336,12 @@ section {
     flex-direction: column;
     align-items: center;
     gap: 30px;
+    aspect-ratio: 16 / 9;
 }
 
 .event-poster {
     max-width: 100%;
-    height: auto;
+    height: 25%;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border: 2px solid var(--primary-orange);
