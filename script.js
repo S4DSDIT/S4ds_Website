@@ -859,7 +859,7 @@ async function loadEventBanner() {
                         <p>${event.description}</p>
                     </div>
                     <div class="event-banner-action">
-                        <a href="https://engg.dypvp.edu.in/VortexHackathon2025.aspx" class="cta-button primary">Register Now</a>
+                        <a href="close.html" class="cta-button primary">Register Now</a>
                     </div>
                 </div>
             </div>
@@ -905,7 +905,7 @@ async function loadEvents() {
             <h3>${event.title}</h3>
             <p>${event.description}</p>
             
-                                            <a href="https://engg.dypvp.edu.in/VortexHackathon2025.aspx" class="event-btn">Register</a>
+                                            <a href="close.html" class="event-btn">Register</a>
           </div>
         </div>
       `;
