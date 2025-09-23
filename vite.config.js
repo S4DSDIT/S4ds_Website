@@ -13,6 +13,7 @@ export default defineConfig({
         sponsors: resolve(__dirname, 'sponsors.html'),
         team: resolve(__dirname, 'team.html'),
         admin: resolve(__dirname, 'admin.html'),
+        close: resolve(__dirname, 'close.html')
       }
     }
   }
