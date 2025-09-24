@@ -277,6 +277,13 @@ section {
     position: relative;
 }
 
+.problem-statement-section {
+    padding: 50px 0;
+    text-align: center;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-glow);
+}
+
 .vortexa-registration-section {
     padding: 50px 0;
     text-align: center;
@@ -1301,6 +1308,10 @@ section {
 
     .cta-button {
         width: 250px;
+    }
+
+    .problem-statement-section .hero-buttons {
+        flex-direction: row;
     }
 
     .stats-grid {
